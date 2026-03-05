@@ -1,7 +1,6 @@
 from typing import Union
-
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
+from AviaxMusic import app
 
 def queue_markup(
     _,
@@ -17,11 +16,17 @@ def queue_markup(
                 text=_["QU_B_1"],
                 callback_data=f"GetQueued {CPLAY}|{videoid}",
             ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="Add Me",
+                url=f"https://t.me/{app.username}?startgroup=true",
+            ),
             InlineKeyboardButton(
                 text=_["CLOSE_BUTTON"],
                 callback_data="close",
             ),
-        ]
+        ],
     ]
     dur = [
         [
@@ -35,6 +40,12 @@ def queue_markup(
                 text=_["QU_B_1"],
                 callback_data=f"GetQueued {CPLAY}|{videoid}",
             ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="Add Me",
+                url=f"https://t.me/{app.username}?startgroup=true",
+            ),
             InlineKeyboardButton(
                 text=_["CLOSE_BUTTON"],
                 callback_data="close",
@@ -43,7 +54,6 @@ def queue_markup(
     ]
     upl = InlineKeyboardMarkup(not_dur if DURATION == "Unknown" else dur)
     return upl
-
 
 def queue_back_markup(_, CPLAY):
     upl = InlineKeyboardMarkup(
@@ -61,7 +71,6 @@ def queue_back_markup(_, CPLAY):
         ]
     )
     return upl
-
 
 def aq_markup(_, chat_id):
     buttons = [
