@@ -1,4 +1,5 @@
 from typing import Union
+from AviaxMusic import app
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
@@ -77,3 +78,4 @@ def aq_markup(_, chat_id):
         ],
     ]
     return buttons
+
