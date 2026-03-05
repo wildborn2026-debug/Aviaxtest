@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime
 from pyrogram.enums import ChatType
-from pytgcalls.exceptions import GroupCallNotFound
+from pytgcalls.exceptions import GroupCallNotFoundError
 import config
 from AviaxMusic import app
 from AviaxMusic.misc import db
@@ -42,7 +42,7 @@ async def auto_leave():
                 logging.error(f"Error processing dialogs: {e}")
 
 asyncio.create_task(auto_leave())
-                    
+
 async def auto_end():
     global autoend, counter
     while True:
@@ -56,8 +56,8 @@ async def auto_end():
             nocall = False
             for chat_id in chatss:
                 try:
-                    users = len(await Aviax.call_listeners(chat_id))
-                except GroupCallNotFound:
+                    users = len(await Aviax.get_participants(chat_id))
+                except GroupCallNotFoundError:
                     users = 1
                     nocall = True
                 except Exception:
