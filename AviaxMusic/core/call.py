@@ -50,7 +50,7 @@ async def _clear_(chat_id):
     db[chat_id] = []
     await remove_active_video_chat(chat_id)
     await remove_active_chat(chat_id)
-    assistantdict.pop(chat_id, None) 
+    assistantdict.pop(chat_id, None)  # FIX: stale assistant cache clear — 100 sec problem solve
 
 
 class Call(PyTgCalls):
@@ -502,4 +502,3 @@ class Call(PyTgCalls):
 
 
 Aviax = Call()
-
