@@ -130,17 +130,17 @@ class Call(PyTgCalls):
             pass
 
     async def stop_stream_force(self, chat_id: int):
-    print(f"STOP STREAM FORCE CALLED: {chat_id}")
-    try:
-        await self.one.leave_call(chat_id)
-        print(f"LEAVE CALL SUCCESS: {chat_id}")
-    except Exception as ex:
-        print(f"LEAVE CALL FAILED: {chat_id} — {ex}")
-    try:
-        await _clear_(chat_id)
-        print(f"CLEAR SUCCESS: {chat_id}")
-    except Exception as ex:
-        print(f"CLEAR FAILED: {chat_id} — {ex}")
+        print(f"STOP STREAM FORCE CALLED: {chat_id}")
+        try:
+            await self.one.leave_call(chat_id)
+            print(f"LEAVE CALL SUCCESS: {chat_id}")
+        except Exception as ex:
+            print(f"LEAVE CALL FAILED: {chat_id} — {ex}")
+            try:
+                await _clear_(chat_id)
+                print(f"CLEAR SUCCESS: {chat_id}")
+            except Exception as ex:
+                print(f"CLEAR FAILED: {chat_id} — {ex}")
 
     async def speedup_stream(self, chat_id: int, file_path, speed, playing):
         assistant = await group_assistant(self, chat_id)
@@ -504,5 +504,6 @@ class Call(PyTgCalls):
 
 
 Aviax = Call()
+
 
 
