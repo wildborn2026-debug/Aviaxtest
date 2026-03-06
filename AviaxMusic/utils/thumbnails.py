@@ -1,6 +1,6 @@
 # ATLEAST GIVE CREDITS IF YOU STEALING :(((((((((((((((((((((((((((((((((((((
 # ELSE NO FURTHER PUBLIC THUMBNAIL UPDATES
-
+import traceback
 import random
 import logging
 import os
@@ -248,3 +248,4 @@ async def gen_thumb(videoid: str):
         logging.error(f"Error generating thumbnail for video {videoid}: {e}")
         traceback.print_exc()
         return None
+
