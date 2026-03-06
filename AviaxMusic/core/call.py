@@ -271,7 +271,12 @@ class Call(PyTgCalls):
             raise AssistantErr(_["call_10"])
         except (GroupcallInvalid, Exception) as e:
             if isinstance(e, GroupcallInvalid) or "GROUPCALL_INVALID" in str(e):
+                # Hamara cache aur PyTgCalls ka internal cache dono clear
                 assistantdict.pop(chat_id, None)
+                try:
+                    await assistant.leave_call(chat_id)
+                except:
+                    pass
                 raise AssistantErr(_["call_8"])
             LOGGER(__name__).error(f"JOIN CALL ERROR: {e}", exc_info=True)
             raise AssistantErr(_["call_10"])
