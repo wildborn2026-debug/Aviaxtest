@@ -130,17 +130,18 @@ class Call(PyTgCalls):
             pass
 
     async def stop_stream_force(self, chat_id: int):
-        print(f"STOP STREAM FORCE CALLED: {chat_id}")
         try:
             await self.one.leave_call(chat_id)
-            print(f"LEAVE CALL SUCCESS: {chat_id}")
-        except Exception as ex:
-            print(f"LEAVE CALL FAILED: {chat_id} — {ex}")
+        except Exception:
+        # leave_call fail hua — manually internal cache clear karo
             try:
-                await _clear_(chat_id)
-                print(f"CLEAR SUCCESS: {chat_id}")
-            except Exception as ex:
-                print(f"CLEAR FAILED: {chat_id} — {ex}")
+                self.one._cache._cache.pop(chat_id, None)
+                except:
+                    pass
+                    try:
+                        await _clear_(chat_id)
+                        except:
+                            pass
 
     async def speedup_stream(self, chat_id: int, file_path, speed, playing):
         assistant = await group_assistant(self, chat_id)
@@ -504,6 +505,7 @@ class Call(PyTgCalls):
 
 
 Aviax = Call()
+
 
 
 
