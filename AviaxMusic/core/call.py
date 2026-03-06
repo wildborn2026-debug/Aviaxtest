@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from typing import Union
 
 from ntgcalls import ConnectionNotFound, TelegramServerError
+from pyrogram.errors import GroupcallInvalid
 from pyrogram import Client
 from pyrogram.types import InlineKeyboardMarkup
 from pytgcalls import PyTgCalls
@@ -509,5 +510,6 @@ class Call(PyTgCalls):
 
 
 Aviax = Call()
+
 
 
