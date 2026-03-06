@@ -269,7 +269,11 @@ class Call(PyTgCalls):
             raise AssistantErr(_["call_10"])
         except Exception as e:
             if "GROUPCALL_INVALID" in str(e):
-                await asyncio.sleep(3)
+                try:
+                    await assistant._clear_cache(chat_id)
+                except:
+                    pass
+                await asyncio.sleep(2)
                 try:
                     await self._play(assistant, chat_id, stream)
                 except NoActiveGroupCall:
@@ -510,6 +514,7 @@ class Call(PyTgCalls):
 
 
 Aviax = Call()
+
 
 
 
