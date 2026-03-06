@@ -89,12 +89,19 @@ class Call(PyTgCalls):
         self.five = PyTgCalls(self.userbot5, cache_duration=100)
 
     def _build_stream(self, source, video=False, ffmpeg=None):
-        return MediaStream(
-            source,
-            AudioQuality.HIGH,
-            VideoQuality.SD_480p if video else None,
-            ffmpeg_parameters=ffmpeg,
-        )
+        if video:
+            return MediaStream(
+                source,
+                AudioQuality.HIGH,
+                VideoQuality.SD_480p,
+                ffmpeg_parameters=ffmpeg,
+            )
+        else:
+            return MediaStream(
+                source,
+                AudioQuality.HIGH,
+                ffmpeg_parameters=ffmpeg,
+            )
 
     async def _play(self, assistant, chat_id, stream):
         await assistant.play(
@@ -492,3 +499,4 @@ class Call(PyTgCalls):
 
 
 Aviax = Call()
+
