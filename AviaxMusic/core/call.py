@@ -269,7 +269,10 @@ class Call(PyTgCalls):
             raise AssistantErr(_["call_9"])
         except (ConnectionNotFound, TelegramServerError):
             raise AssistantErr(_["call_10"])
-        except Exception as e:
+        except (GroupcallInvalid, Exception) as e:
+            if isinstance(e, GroupcallInvalid) or "GROUPCALL_INVALID" in str(e):
+                assistantdict.pop(chat_id, None)
+                raise AssistantErr(_["call_8"])
             LOGGER(__name__).error(f"JOIN CALL ERROR: {e}", exc_info=True)
             raise AssistantErr(_["call_10"])
         await add_active_chat(chat_id)
