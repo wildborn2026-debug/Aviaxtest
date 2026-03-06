@@ -50,7 +50,30 @@ async def _clear_(chat_id):
     db[chat_id] = []
     await remove_active_video_chat(chat_id)
     await remove_active_chat(chat_id)
-    assistantdict.pop(chat_id, None)  # FIX: stale assistant cache clear — 100 sec problem solve
+    assistantdict.pop(chat_id, None)
+
+
+async def _force_clear_pytgcalls_cache(client, chat_id):
+    """PyTgCalls ka internal cache force clear karo"""
+    try:
+        # Method 1: _cache attribute
+        if hasattr(client, '_cache') and hasattr(client._cache, '_cache'):
+            client._cache._cache.pop(chat_id, None)
+    except:
+        pass
+    try:
+        # Method 2: calls dict
+        if hasattr(client, '_calls'):
+            client._calls.pop(chat_id, None)
+    except:
+        pass
+    try:
+        # Method 3: mtproto cache
+        if hasattr(client, '_app') and hasattr(client._app, '_cache'):
+            if hasattr(client._app._cache, '_cache'):
+                client._app._cache._cache.pop(chat_id, None)
+    except:
+        pass
 
 
 class Call(PyTgCalls):
@@ -130,18 +153,25 @@ class Call(PyTgCalls):
             pass
 
     async def stop_stream_force(self, chat_id: int):
-        try:
-            await self.one.leave_call(chat_id)
-        except Exception:
-        # leave_call fail hua — manually internal cache clear karo
+        for string, client in [
+            (config.STRING1, self.one),
+            (config.STRING2, self.two),
+            (config.STRING3, self.three),
+            (config.STRING4, self.four),
+            (config.STRING5, self.five),
+        ]:
+            if not string:
+                continue
             try:
-                self.one._cache._cache.pop(chat_id, None)
-                except:
-                    pass
-                    try:
-                        await _clear_(chat_id)
-                        except:
-                            pass
+                await client.leave_call(chat_id)
+            except:
+                pass
+            # leave_call fail ho ya success — dono cases me internal cache clear karo
+            await _force_clear_pytgcalls_cache(client, chat_id)
+        try:
+            await _clear_(chat_id)
+        except:
+            pass
 
     async def speedup_stream(self, chat_id: int, file_path, speed, playing):
         assistant = await group_assistant(self, chat_id)
@@ -266,8 +296,8 @@ class Call(PyTgCalls):
             raise AssistantErr(_["call_10"])
         except (GroupcallInvalid, Exception) as e:
             if isinstance(e, GroupcallInvalid) or "GROUPCALL_INVALID" in str(e):
-                # Hamara cache aur PyTgCalls ka internal cache dono clear
                 assistantdict.pop(chat_id, None)
+                await _force_clear_pytgcalls_cache(assistant, chat_id)
                 try:
                     await assistant.leave_call(chat_id)
                 except:
@@ -505,8 +535,3 @@ class Call(PyTgCalls):
 
 
 Aviax = Call()
-
-
-
-
-
