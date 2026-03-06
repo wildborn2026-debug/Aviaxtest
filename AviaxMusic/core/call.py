@@ -267,8 +267,18 @@ class Call(PyTgCalls):
         except (ConnectionNotFound, TelegramServerError):
             raise AssistantErr(_["call_10"])
         except Exception as e:
-            LOGGER(__name__).error(f"JOIN CALL ERROR: {e}", exc_info=True)
-            raise AssistantErr(_["call_10"])
+            if "GROUPCALL_INVALID" in str(e):
+                await asyncio.sleep(3)
+                try:
+                    await self._play(assistant, chat_id, stream)
+                except NoActiveGroupCall:
+                    raise AssistantErr(_["call_8"])
+                except Exception as e2:
+                    LOGGER(__name__).error(f"JOIN CALL RETRY ERROR: {e2}", exc_info=True)
+                    raise AssistantErr(_["call_10"])
+            else:
+                LOGGER(__name__).error(f"JOIN CALL ERROR: {e}", exc_info=True)
+                raise AssistantErr(_["call_10"])
         await add_active_chat(chat_id)
         await music_on(chat_id)
         if video:
@@ -499,4 +509,5 @@ class Call(PyTgCalls):
 
 
 Aviax = Call()
+
 
