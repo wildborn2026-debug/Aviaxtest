@@ -25,6 +25,7 @@ from AviaxMusic.misc import db
 from AviaxMusic.utils.database import (
     add_active_chat,
     add_active_video_chat,
+    assistantdict,
     get_lang,
     get_loop,
     group_assistant,
@@ -49,6 +50,7 @@ async def _clear_(chat_id):
     db[chat_id] = []
     await remove_active_video_chat(chat_id)
     await remove_active_chat(chat_id)
+    assistantdict.pop(chat_id, None)  # FIX: stale assistant cache clear — 100 sec problem solve
 
 
 class Call(PyTgCalls):
@@ -268,22 +270,8 @@ class Call(PyTgCalls):
         except (ConnectionNotFound, TelegramServerError):
             raise AssistantErr(_["call_10"])
         except Exception as e:
-            if "GROUPCALL_INVALID" in str(e):
-                try:
-                    await assistant._clear_cache(chat_id)
-                except:
-                    pass
-                await asyncio.sleep(2)
-                try:
-                    await self._play(assistant, chat_id, stream)
-                except NoActiveGroupCall:
-                    raise AssistantErr(_["call_8"])
-                except Exception as e2:
-                    LOGGER(__name__).error(f"JOIN CALL RETRY ERROR: {e2}", exc_info=True)
-                    raise AssistantErr(_["call_10"])
-            else:
-                LOGGER(__name__).error(f"JOIN CALL ERROR: {e}", exc_info=True)
-                raise AssistantErr(_["call_10"])
+            LOGGER(__name__).error(f"JOIN CALL ERROR: {e}", exc_info=True)
+            raise AssistantErr(_["call_10"])
         await add_active_chat(chat_id)
         await music_on(chat_id)
         if video:
@@ -514,7 +502,3 @@ class Call(PyTgCalls):
 
 
 Aviax = Call()
-
-
-
-
