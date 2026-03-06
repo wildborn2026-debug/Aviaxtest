@@ -12,4 +12,5 @@ async def vc_started(_, message: Message):
 
 @app.on_message(filters.video_chat_ended, group=30)
 async def vc_ended(_, message: Message):
+    print(f"VC ENDED EVENT: {message.chat.id}")  # DEBUG
     await Aviax.stop_stream_force(message.chat.id)
